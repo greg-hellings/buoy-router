@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router;
+package buoy.router.exceptions;
 
 /**
  *
  * @author greg
  */
-public interface Handler {
-    void handleRequest();
+public class InvalidHandlerException extends Exception {
+
+	public InvalidHandlerException(String message) {
+		super(message);
+	}
+
 }
