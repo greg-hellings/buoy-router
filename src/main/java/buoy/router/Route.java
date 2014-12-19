@@ -9,7 +9,9 @@ package buoy.router;
  *
  * @author greg
  */
-public interface Route {
-    Verb getVerb();
-    String getPath();
+public interface Route<T extends Enum> {
+
+	T getVerb();
+
+	String getPath();
 }

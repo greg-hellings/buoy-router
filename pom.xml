@@ -71,6 +71,12 @@
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -89,25 +95,25 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.5</version>
 			</plugin>
-			<!-- plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.2</version>
-				<configuration>
-					<xmlOutput>true</xmlOutput>
-					<findbugsXmlOutput>true</findbugsXmlOutput>
-					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-					<excludeFilterFile>config/findbugs-excludes.xml</excludeFilterFile>
-				</configuration>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.2.201409121644</version>
 				<executions>
 					<execution>
-						<phase>verify</phase>
 						<goals>
-							<goal>check</goal>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
-			</plugin -->
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
