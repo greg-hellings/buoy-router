@@ -5,12 +5,13 @@
  */
 package buoy.router.utils;
 
+import buoy.router.Handler;
 import buoy.router.Route;
+import javafx.util.Pair;
 
 /**
  *
  * @author greg
  */
-public interface RouteReader {
-    Route getNextRoute();
+public interface RouteReader extends Iterable<Pair<Route, Handler>> {
 }
