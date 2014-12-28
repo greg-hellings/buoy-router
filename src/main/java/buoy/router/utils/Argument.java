@@ -49,7 +49,7 @@ public class Argument {
 			log.log(Level.SEVERE, "No string constructor found", ex);
 			throw ex;
 		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "Constructor found, but inaccessible", ex);
+			log.log(Level.SEVERE, "Constructor inaccessible", ex);
 			throw ex;
 		}
 	}
