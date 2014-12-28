@@ -39,8 +39,12 @@ public class Argument {
 
 	public Argument(String name, Class type) throws NoSuchMethodException {
 		this.name = name;
+                Class usedType = type;
+                if (Argument.primitives.containsKey(type)) {
+                    usedType = Argument.primitives.get(type);
+                }
 		try {
-			this.type = type.getConstructor(String.class);
+			this.type = usedType.getConstructor(String.class);
 		} catch (NoSuchMethodException ex) {
 			log.log(Level.SEVERE, "No string constructor found", ex);
 			throw ex;
@@ -50,13 +54,14 @@ public class Argument {
 		}
 	}
 
-	public Object getType(Invocation invocation) {
+	public Object getType(Invocation invocation) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Object object = null;
 		if (invocation.hasKey(this.name)) {
 			try {
 				object = this.type.newInstance(invocation.getValue(this.name));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				log.log(Level.SEVERE, "Error intantiating argument from Invocation", ex);
+                                throw ex;
 			}
 		}
 

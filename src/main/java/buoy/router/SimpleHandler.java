@@ -89,7 +89,13 @@ public class SimpleHandler implements Handler {
 		Object[] arguments = new Object[this.arguments.size()];
 		int argCounter = 0;
 		for (Argument argument : this.arguments) {
-			arguments[argCounter++] = argument.getType(invocation);
+                    try {
+                        arguments[argCounter] = argument.getType(invocation);
+                    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                        log.log(Level.SEVERE, "Problem instantiating object. Replacing with null.", ex);
+                        arguments[argCounter] = null;
+                    }
+                    argCounter++;
 		}
 		// Try to instantiate the class we're invoking on
 		Object subject = null;
