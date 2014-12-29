@@ -1,17 +1,12 @@
 # buoy-router   1.0-SNAPSHOT
 ## Introduction
-*Make a clear and concise mission statement about the project:*
+*A simple, straightforward router implementation for apps, with a focus on web usages:*
 
-- *What problem does it try to fix?*
-- *What are the most important features?*
-
-*Also important: What is the current state of the project? Is it early development or already future complete and production stable?*
+*Currently this project is in an early stage of development
 
 ## Getting started
-*Just some lines of description in prose and code that gets the user up and running with this library.*
-
-## Contribution
-*Change the following for correctness*
+*The API currently is in a state of flux and should not be relied upon for code.
+*Expect further documentation when the API has congealed.
 
 ### Setup a development environment
 buoy-router is built using Maven (at least version 3.0.4).
@@ -22,10 +17,7 @@ The likelihood of a pull request being used rises with the following properties:
 
 - You have used a feature branch.
 - You have included a test that demonstrates the functionality added or fixed.
-- You adhered to the [code conventions](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html).
-
-## Sponsoring
-This project is sponsored and supported by [holisticon AG](http://holisticon.de/cms/About/Startseite)
+- You do not use spaces in your contribution
 
 ## License
 This project is released under the revised BSD License (s. license.txt).
