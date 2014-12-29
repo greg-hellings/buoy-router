@@ -63,6 +63,7 @@ public class ArgumentNGTest {
 	public void missingArgument() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("nonexistent", GetTypeSuccessClass.class);
 		GetTypeSuccessClass response = (GetTypeSuccessClass) argument.getType(new TestInvocation());
+		assertNull(response);
 	}
 
 	/**
