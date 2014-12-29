@@ -59,6 +59,12 @@ public class ArgumentNGTest {
 		fail("Exception should have happened already.");
 	}
 
+	@Test
+	public void missingArgument() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Argument argument = new Argument("nonexistent", GetTypeSuccessClass.class);
+		GetTypeSuccessClass response = (GetTypeSuccessClass) argument.getType(new TestInvocation());
+	}
+
 	/**
 	 * A test class that should succeed
 	 */
