@@ -20,27 +20,21 @@ import java.util.logging.Logger;
  *
  * @author greg
  */
-public class SimpleHandler implements Handler {
+public class SimpleHandler<T> implements Handler<T> {
 
-	private Constructor constructor;
+	private Constructor<T> constructor;
 	private Method method;
 	private List<Argument> arguments;
 	private static final Logger log = Logger.getLogger(SimpleHandler.class.getName());
 
 	public SimpleHandler(String classname, String methodname) throws InvalidHandlerException {
-		Class clazz = null;
+		Class<T> clazz = null;
 		try {
-			clazz = Class.forName(classname);
-			this.constructor = clazz.getConstructor();
+			clazz = (Class<T>) Class.forName(classname);
+			this.constructor = this.extractConstructor(clazz);
 		} catch (ClassNotFoundException exception) {
 			log.log(Level.SEVERE, "Unable to locate " + classname);
 			throw new InvalidHandlerException("No classname " + classname + " found");
-		} catch (NoSuchMethodException ex) {
-			log.log(Level.SEVERE, "There is not a default constructor. Assuming method is static.", ex);
-			this.constructor = null;
-		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.", ex);
-			this.constructor = null;
 		}
 
 		for (Method method : clazz.getMethods()) {
@@ -56,19 +50,22 @@ public class SimpleHandler implements Handler {
 		this.extractArguments();
 	}
 
-	public SimpleHandler(Class clazz, Method method) {
-		try {
-			this.constructor = clazz.getConstructor();
-		} catch (NoSuchMethodException ex) {
-			log.log(Level.SEVERE, "It appears there is no default constructor. Assuming method is static.", ex);
-			this.constructor = null;
-		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.", ex);
-			this.constructor = null;
-		}
+	public SimpleHandler(Class<T> clazz, Method method) {
+		this.constructor = this.extractConstructor(clazz);
 		this.method = method;
 
 		this.extractArguments();
+	}
+
+	private Constructor<T> extractConstructor(Class<T> clazz) {
+		try {
+			return clazz.getConstructor();
+		} catch (NoSuchMethodException ex) {
+			log.log(Level.SEVERE, "It appears there is no default constructor. Assuming method is static.", ex);
+		} catch (SecurityException ex) {
+			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.", ex);
+		}
+		return null;
 	}
 
 	private void extractArguments() {
@@ -85,6 +82,24 @@ public class SimpleHandler implements Handler {
 
 	@Override
 	public void handleRequest(Invocation invocation) {
+		// Try to instantiate the class we're invoking on
+		T subject = null;
+		if (!this.method.isDefault()) {
+			try {
+				subject = this.constructor.newInstance();
+			} catch (IllegalAccessException | InstantiationException exception) {
+				log.log(Level.SEVERE, "It appears the class constructor was private or no default constructor exists. Attempting to recover by invoking method as a static.");
+			} catch (IllegalArgumentException ex) {
+				log.log(Level.SEVERE, "wat", ex);
+			} catch (InvocationTargetException ex) {
+				log.log(Level.SEVERE, "Class constructor reported the following error. Attempting to recover by invoking as a static method.", ex);
+			}
+		}
+		this.handleRequest(subject, invocation);
+	}
+
+	@Override
+	public void handleRequest(T t, Invocation invocation) {
 		// Convert values from invocation to argument list
 		Object[] arguments = new Object[this.arguments.size()];
 		int argCounter = 0;
@@ -97,22 +112,9 @@ public class SimpleHandler implements Handler {
 			}
 			argCounter++;
 		}
-		// Try to instantiate the class we're invoking on
-		Object subject = null;
-		if (!this.method.isDefault()) {
-			try {
-				subject = this.constructor.newInstance();
-			} catch (IllegalAccessException | InstantiationException exception) {
-				log.log(Level.SEVERE, "It appears the class constructor was private or no default constructor exists. Attempting to recover by invoking method as a static.");
-			} catch (IllegalArgumentException ex) {
-				log.log(Level.SEVERE, "wat", ex);
-			} catch (InvocationTargetException ex) {
-				log.log(Level.SEVERE, "Class constructor reported the following error. Attempting to recover by invoking as a static method.", ex);
-			}
-		}
 		// Try to invoke the method
 		try {
-			this.method.invoke(subject, arguments);
+			this.method.invoke(t, arguments);
 		} catch (IllegalAccessException ex) {
 			log.log(Level.SEVERE, "It appears the specified method is not public. Please ensure it is accessible and try again.", ex);
 		} catch (IllegalArgumentException ex) {

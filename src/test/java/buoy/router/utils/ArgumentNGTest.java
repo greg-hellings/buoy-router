@@ -6,6 +6,7 @@
 package buoy.router.utils;
 
 import buoy.router.Invocation;
+import buoy.router.TestInvocation;
 import java.lang.reflect.InvocationTargetException;
 import static org.testng.Assert.*;
 import org.testng.annotations.ExpectedExceptions;
@@ -26,62 +27,36 @@ public class ArgumentNGTest {
 	@Test
 	public void testGetType() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testString", GetTypeSuccessClass.class);
-		GetTypeSuccessClass answer = (GetTypeSuccessClass) argument.getType(new InvocationTest());
+		GetTypeSuccessClass answer = (GetTypeSuccessClass) argument.getType(new TestInvocation());
 		assertEquals(answer.word, "Test String");
 	}
 
 	@Test
 	public void testGetTypePrimitive() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testInt", int.class);
-		Integer response = (Integer) argument.getType(new InvocationTest());
+		Integer response = (Integer) argument.getType(new TestInvocation());
 		assertEquals(response, new Integer(1));
 	}
 
 	@Test
 	public void testGetTypeBuiltIn() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testInteger", Integer.class);
-		Integer response = (Integer) argument.getType(new InvocationTest());
+		Integer response = (Integer) argument.getType(new TestInvocation());
 		assertEquals(response, new Integer(2));
 	}
 
 	@Test(expectedExceptions = {NoSuchMethodException.class})
 	public void testArgumentThrowsSecurityException() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testString", GetTypeNoSuchMethodClass.class);
-		GetTypeNoSuchMethodClass response = (GetTypeNoSuchMethodClass) argument.getType(new InvocationTest());
+		GetTypeNoSuchMethodClass response = (GetTypeNoSuchMethodClass) argument.getType(new TestInvocation());
 		fail("Exception should have happened already.");
 	}
 
 	@Test(expectedExceptions = {InvocationTargetException.class})
 	public void testAgumentThrowsException() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testInteger", GetTypeFailureClass.class);
-		GetTypeFailureClass response = (GetTypeFailureClass) argument.getType(new InvocationTest());
+		GetTypeFailureClass response = (GetTypeFailureClass) argument.getType(new TestInvocation());
 		fail("Exception should have happened already.");
-	}
-
-	private class InvocationTest implements Invocation {
-
-		@Override
-		public boolean hasKey(String key) {
-			if (key.equals("testInt") || key.equals("testInteger") || key.equals("testString")) {
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		public String getValue(String key) {
-			if (key.equals("testInt")) {
-				return "1";
-			} else if (key.equals("testInteger")) {
-				return "2";
-			} else if (key.equals("testString")) {
-				return "Test String";
-			}
-
-			fail("Should not have been here.");
-			return "";
-		}
-
 	}
 
 	/**

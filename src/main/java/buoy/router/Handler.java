@@ -9,7 +9,9 @@ package buoy.router;
  *
  * @author greg
  */
-public interface Handler {
+public interface Handler<T> {
+
+	void handleRequest(T t, Invocation invocation);
 
 	void handleRequest(Invocation invocation);
 }
