@@ -5,6 +5,8 @@
  */
 package buoy.router;
 
+import java.util.List;
+
 /**
  *
  * @author Gregory
@@ -21,6 +23,10 @@ public class TestController {
 
 	public void stringArgumentMethod(String testString) {
 		// Pass
+	}
+
+	public void badArgument(List<Integer> list) {
+
 	}
 
 	public static void staticMethod() {

@@ -60,4 +60,9 @@ public class SimpleHandlerNGTest {
 		simpleHandler.handleRequest(testController, new TestInvocation());
 		verify(testController, times(1)).stringArgumentMethod("Test String");
 	}
+
+	@Test
+	public void testMethodWithBadArgument() throws InvalidHandlerException {
+		SimpleHandler<TestController> simpleHandler = new SimpleHandler<>(TestController.class.getCanonicalName(), "badArgument");
+	}
 }
