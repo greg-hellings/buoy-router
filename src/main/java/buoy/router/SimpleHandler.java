@@ -76,6 +76,7 @@ public class SimpleHandler<T> implements Handler<T> {
 				this.arguments.add(new Argument(parameter.getName(), parameter.getType()));
 			} catch (NoSuchMethodException ex) {
 				log.log(Level.SEVERE, "Unable to identify string-based constructor for type " + parameter.getType().getName(), ex);
+				this.arguments.add(null);
 			}
 		}
 	}
@@ -106,7 +107,7 @@ public class SimpleHandler<T> implements Handler<T> {
 		for (Argument argument : this.arguments) {
 			try {
 				arguments[argCounter] = argument.getType(invocation);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException ex) {
 				log.log(Level.SEVERE, "Problem instantiating object. Replacing with null.", ex);
 				arguments[argCounter] = null;
 			}

@@ -15,10 +15,6 @@ public class TestControllerNoDefaultConstructor {
 
 	}
 
-	public TestControllerNoDefaultConstructor() throws Exception {
-		throw new Exception("I Shouldn't Be Here");
-	}
-
 	public static void staticMethod() {
 
 	}
