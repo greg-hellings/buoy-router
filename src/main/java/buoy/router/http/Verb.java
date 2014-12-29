@@ -10,10 +10,11 @@ package buoy.router.http;
  * @author greg
  */
 public enum Verb {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    OPTIONS,
-    ANY
+
+	GET,
+	POST,
+	PUT,
+	DELETE,
+	OPTIONS,
+	ANY
 }

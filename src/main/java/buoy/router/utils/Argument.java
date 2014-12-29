@@ -39,10 +39,10 @@ public class Argument {
 
 	public Argument(String name, Class type) throws NoSuchMethodException {
 		this.name = name;
-                Class usedType = type;
-                if (Argument.primitives.containsKey(type)) {
-                    usedType = Argument.primitives.get(type);
-                }
+		Class usedType = type;
+		if (Argument.primitives.containsKey(type)) {
+			usedType = Argument.primitives.get(type);
+		}
 		try {
 			this.type = usedType.getConstructor(String.class);
 		} catch (NoSuchMethodException ex) {
@@ -61,7 +61,7 @@ public class Argument {
 				object = this.type.newInstance(invocation.getValue(this.name));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				log.log(Level.SEVERE, "Error intantiating argument from Invocation", ex);
-                                throw ex;
+				throw ex;
 			}
 		}
 

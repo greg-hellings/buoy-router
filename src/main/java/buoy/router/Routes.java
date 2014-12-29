@@ -10,7 +10,10 @@ package buoy.router;
  * @author greg
  */
 public interface Routes {
-    void addRoute(Route route, Handler handler);
-    Handler getHandlerForRoute(Route route);
-    void clearRoutes();
+
+	void addRoute(Route route, Handler handler);
+
+	Handler getHandlerForRoute(Route route);
+
+	void clearRoutes();
 }
