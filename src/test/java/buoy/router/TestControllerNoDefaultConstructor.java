@@ -15,7 +15,7 @@ public class TestControllerNoDefaultConstructor {
 
 	}
 
-	public TestControllerNoDefaultConstructor() {
+	public TestControllerNoDefaultConstructor() throws Exception {
 		throw new Exception("I Shouldn't Be Here");
 	}
 
