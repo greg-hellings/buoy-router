@@ -68,4 +68,13 @@ public class SimpleHandlerNGTest {
 		simpleHandler.handleRequest(testController, new TestInvocation());
 		verify(testController, times(1)).badArgument(null);
 	}
+
+	@Test
+	public void testStaticMethod() throws InvalidHandlerException {
+		SimpleHandler<TestController> simpleHandler = new SimpleHandler<>(TestController.class.getCanonicalName(), "staticMethod");
+		TestController.Incrementer incrementer = mock(TestController.Incrementer.class);
+		TestController.incrementer = incrementer;
+		simpleHandler.handleRequest(new TestInvocation());
+		verify(incrementer, times(1)).increment();
+	}
 }

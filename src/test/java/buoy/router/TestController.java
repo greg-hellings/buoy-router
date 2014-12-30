@@ -13,6 +13,17 @@ import java.util.List;
  */
 public class TestController {
 
+	public static class Incrementer {
+
+		private int counter = 0;
+
+		public void increment() {
+			this.counter++;
+		}
+	}
+
+	public static Incrementer incrementer = new Incrementer();
+
 	public TestController() {
 
 	}
@@ -30,6 +41,6 @@ public class TestController {
 	}
 
 	public static void staticMethod() {
-
+		incrementer.increment();
 	}
 }

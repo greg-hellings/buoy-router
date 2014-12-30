@@ -10,6 +10,7 @@ import buoy.router.utils.Argument;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +62,9 @@ public class SimpleHandler<T> implements Handler<T> {
 		try {
 			return clazz.getConstructor();
 		} catch (NoSuchMethodException ex) {
-			log.log(Level.SEVERE, "It appears there is no default constructor. Assuming method is static.", ex);
+			log.log(Level.SEVERE, "It appears there is no default constructor. Assuming method is static.");
 		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.", ex);
+			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.");
 		}
 		return null;
 	}
@@ -75,7 +76,7 @@ public class SimpleHandler<T> implements Handler<T> {
 			try {
 				this.arguments.add(new Argument(parameter.getName(), parameter.getType()));
 			} catch (NoSuchMethodException ex) {
-				log.log(Level.SEVERE, "Unable to identify string-based constructor for type " + parameter.getType().getName(), ex);
+				log.log(Level.SEVERE, "Unable to identify string-based constructor for type " + parameter.getType().getName());
 				this.arguments.add(null);
 			}
 		}
@@ -85,15 +86,15 @@ public class SimpleHandler<T> implements Handler<T> {
 	public void handleRequest(Invocation invocation) {
 		// Try to instantiate the class we're invoking on
 		T subject = null;
-		if (!this.method.isDefault()) {
+		if (!Modifier.isStatic(this.method.getModifiers())) {
 			try {
 				subject = this.constructor.newInstance();
 			} catch (IllegalAccessException | InstantiationException exception) {
 				log.log(Level.SEVERE, "It appears the class constructor was private or no default constructor exists. Attempting to recover by invoking method as a static.");
 			} catch (IllegalArgumentException ex) {
-				log.log(Level.SEVERE, "wat", ex);
+				log.log(Level.SEVERE, "wat");
 			} catch (InvocationTargetException ex) {
-				log.log(Level.SEVERE, "Class constructor reported the following error. Attempting to recover by invoking as a static method.", ex);
+				log.log(Level.SEVERE, "Class constructor reported the following error. Attempting to recover by invoking as a static method.");
 			}
 		}
 		this.handleRequest(subject, invocation);
@@ -108,7 +109,7 @@ public class SimpleHandler<T> implements Handler<T> {
 			try {
 				arguments[argCounter] = argument.getType(invocation);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException ex) {
-				log.log(Level.SEVERE, "Problem instantiating object. Replacing with null.", ex);
+				log.log(Level.SEVERE, "Problem instantiating object. Replacing with null.");
 				arguments[argCounter] = null;
 			}
 			argCounter++;
@@ -117,11 +118,11 @@ public class SimpleHandler<T> implements Handler<T> {
 		try {
 			this.method.invoke(t, arguments);
 		} catch (IllegalAccessException ex) {
-			log.log(Level.SEVERE, "It appears the specified method is not public. Please ensure it is accessible and try again.", ex);
+			log.log(Level.SEVERE, "It appears the specified method is not public. Please ensure it is accessible and try again.");
 		} catch (IllegalArgumentException ex) {
-			log.log(Level.SEVERE, "Unable to call the specified method, as we were unable to construct its necessary arguments.", ex);
+			log.log(Level.SEVERE, "Unable to call the specified method, as we were unable to construct its necessary arguments.");
 		} catch (InvocationTargetException ex) {
-			log.log(Level.SEVERE, "Method reported the following exception.", ex);
+			log.log(Level.SEVERE, "Method reported the following exception.");
 		}
 	}
 }
