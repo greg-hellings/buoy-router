@@ -6,19 +6,19 @@
 package buoy.router;
 
 import buoy.router.utils.RouteReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.util.Pair;
 
 /**
- * A very simple hash map of routes to handlers, just to serve the simple cases where route lookup is relatively
- * straightforward.
+ * A very simple hash map of routes to handlers, just to serve the simple cases
+ * where route lookup is relatively straightforward.
  *
  * @author greg
  */
 public class SimpleRoutes implements Routes {
 
-	private final Map<Route, Handler> routes = new HashMap<>();
+	private final List<Pair<Route, Handler>> routes = new ArrayList<>();
 
 	public SimpleRoutes() {
 	}
@@ -30,17 +30,18 @@ public class SimpleRoutes implements Routes {
 	}
 
 	@Override
-	public void addRoute(Route route, Handler handler) {
-		this.routes.put(route, handler);
+	public final void addRoute(Route route, Handler handler) {
+		this.routes.add(new Pair<>(route, handler));
 	}
 
 	@Override
 	public Handler getHandlerForRoute(Route route) {
-		Handler handler = null;
-		if (routes.containsKey(route)) {
-			handler = routes.get(route);
+		for (Pair<Route, Handler> pair : this.routes) {
+			if (pair.getKey().equals(route)) {
+				return pair.getValue();
+			}
 		}
-		return handler;
+		return null;
 	}
 
 	@Override
