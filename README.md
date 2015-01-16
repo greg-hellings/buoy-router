@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/greg-hellings/buoy-router.svg?branch=master)](https://travis-ci.org/greg-hellings/buoy-router)
+
 # buoy-router   1.0-SNAPSHOT
 ## Introduction
 *A simple, straightforward router implementation for apps, with a focus on web usages:*
