@@ -87,21 +87,25 @@ public class SimpleHandler<T> implements Handler<T> {
 		// Try to instantiate the class we're invoking on
 		T subject = null;
 		if (!Modifier.isStatic(this.method.getModifiers())) {
-			try {
-				subject = this.constructor.newInstance();
-			} catch (IllegalAccessException | InstantiationException exception) {
+			if (this.constructor == null) {
 				log.log(Level.SEVERE, "It appears the class constructor was private or no default constructor exists. Attempting to recover by invoking method as a static.");
-			} catch (IllegalArgumentException ex) {
-				log.log(Level.SEVERE, "wat");
-			} catch (InvocationTargetException ex) {
-				log.log(Level.SEVERE, "Class constructor reported the following error. Attempting to recover by invoking as a static method.");
+			} else {
+				try {
+					subject = this.constructor.newInstance();
+				} catch (IllegalAccessException |
+						InstantiationException |
+						IllegalArgumentException |
+						InvocationTargetException exception) {
+					log.log(Level.SEVERE, "An error occured trying to instantiate this handler.");
+				}
 			}
 		}
 		this.handleRequest(subject, invocation);
 	}
 
 	@Override
-	public void handleRequest(T t, Invocation invocation) {
+	public void handleRequest(T t, Invocation invocation
+	) {
 		// Convert values from invocation to argument list
 		Object[] arguments = new Object[this.arguments.size()];
 		int argCounter = 0;

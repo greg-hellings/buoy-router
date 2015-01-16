@@ -6,7 +6,6 @@
 package buoy.router;
 
 import buoy.router.exceptions.InvalidHandlerException;
-import static org.testng.Assert.*;
 import static org.mockito.Mockito.*;
 import org.testng.annotations.Test;
 
@@ -76,5 +75,19 @@ public class SimpleHandlerNGTest {
 		TestController.incrementer = incrementer;
 		simpleHandler.handleRequest(new TestInvocation());
 		verify(incrementer, times(1)).increment();
+	}
+
+	@Test
+	// Currently failing - needs more guards
+	public void testNoDefaultConstructorAndInvalidMethod() throws InvalidHandlerException {
+		SimpleHandler<TestControllerNoDefaultConstructor> simpleHandler = new SimpleHandler<>(TestControllerNoDefaultConstructor.class.getCanonicalName(), "instanceMethod");
+		simpleHandler.handleRequest(new TestInvocation());
+	}
+
+	@Test
+	// Currently also failing - needs more guards
+	public void testPrivateConstructor() throws InvalidHandlerException {
+		SimpleHandler<TestControllerPrivateConstructor> simpleHandler = new SimpleHandler<>(TestControllerPrivateConstructor.class.getCanonicalName(), "instanceMethod");
+		simpleHandler.handleRequest(new TestInvocation());
 	}
 }
