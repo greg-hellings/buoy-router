@@ -5,11 +5,11 @@
  */
 package buoy.router.utils;
 
-import buoy.router.Invocation;
 import buoy.router.TestInvocation;
 import java.lang.reflect.InvocationTargetException;
-import static org.testng.Assert.*;
-import org.testng.annotations.ExpectedExceptions;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 import org.testng.annotations.Test;
 
 /**
@@ -45,18 +45,18 @@ public class ArgumentNGTest {
 		assertEquals(response, new Integer(2));
 	}
 
-	@Test(expectedExceptions = {NoSuchMethodException.class})
-	public void testArgumentThrowsSecurityException() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	@Test
+	public void testArgumentHasPrivateConstructorGivesNull() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testString", GetTypeNoSuchMethodClass.class);
 		GetTypeNoSuchMethodClass response = (GetTypeNoSuchMethodClass) argument.getType(new TestInvocation());
-		fail("Exception should have happened already.");
+		assertNull(response);
 	}
 
-	@Test(expectedExceptions = {InvocationTargetException.class})
-	public void testAgumentThrowsException() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	@Test
+	public void testAgumentReturnsNull() throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Argument argument = new Argument("testInteger", GetTypeFailureClass.class);
 		GetTypeFailureClass response = (GetTypeFailureClass) argument.getType(new TestInvocation());
-		fail("Exception should have happened already.");
+		assertNull(response);
 	}
 
 	@Test

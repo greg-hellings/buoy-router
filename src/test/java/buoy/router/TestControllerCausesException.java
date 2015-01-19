@@ -3,16 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router.exceptions;
+package buoy.router;
 
 /**
  *
  * @author greg
  */
-public class InvalidHandlerException extends Exception {
+public class TestControllerCausesException {
 
-	public InvalidHandlerException(String message) {
-		super(message);
+	public TestControllerCausesException() throws Exception {
+		throw new Exception("This should happen.");
 	}
 
+	public void publicInstanceMethod() {
+
+	}
 }

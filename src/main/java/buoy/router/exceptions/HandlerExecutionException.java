@@ -1,0 +1,17 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package buoy.router.exceptions;
+
+/**
+ *
+ * @author greg
+ */
+public class HandlerExecutionException extends Exception {
+
+	public HandlerExecutionException(String message, Throwable cause) {
+		super(message, cause);
+	}
+}

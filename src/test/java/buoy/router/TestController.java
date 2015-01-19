@@ -28,8 +28,28 @@ public class TestController {
 
 	}
 
-	public void noArgumentMethod() {
-		// Pass
+	private void privateInstanceMethod() {
+
+	}
+
+	protected void protectedInstanceMethod() {
+
+	}
+
+	public void publicInstanceMethod() {
+
+	}
+
+	private static void privateStaticMethod() {
+
+	}
+
+	protected static void protectedStaticMethod() {
+
+	}
+
+	public static void publicStaticMethod() {
+		incrementer.increment();
 	}
 
 	public void stringArgumentMethod(String testString) {
@@ -40,7 +60,7 @@ public class TestController {
 
 	}
 
-	public static void staticMethod() {
-		incrementer.increment();
+	public void publicThrowsBadException() throws Exception {
+		throw new Exception("This is expected.");
 	}
 }

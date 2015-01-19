@@ -37,7 +37,7 @@ public class Argument {
 	private Constructor type;
 	private static final Logger log = Logger.getLogger(Argument.class.getName());
 
-	public Argument(String name, Class type) throws NoSuchMethodException {
+	public Argument(String name, Class type) {
 		this.name = name;
 		Class usedType = type;
 		if (Argument.primitives.containsKey(type)) {
@@ -45,23 +45,19 @@ public class Argument {
 		}
 		try {
 			this.type = usedType.getConstructor(String.class);
-		} catch (NoSuchMethodException ex) {
-			log.log(Level.SEVERE, "No string constructor found", ex);
-			throw ex;
-		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "Constructor inaccessible", ex);
-			throw ex;
+		} catch (NoSuchMethodException | SecurityException ex) {
+			log.log(Level.SEVERE, "No usable string constructor found. Will use null for this value.", ex);
+			this.type = null;
 		}
 	}
 
-	public Object getType(Invocation invocation) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public Object getType(Invocation invocation) {
 		Object object = null;
-		if (invocation.hasKey(this.name)) {
+		if (this.type != null && invocation.hasKey(this.name)) {
 			try {
 				object = this.type.newInstance(invocation.getValue(this.name));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-				log.log(Level.SEVERE, "Error intantiating argument from Invocation", ex);
-				throw ex;
+				log.log(Level.SEVERE, "Error intantiating argument from Invocation. Returning null.");
 			}
 		}
 

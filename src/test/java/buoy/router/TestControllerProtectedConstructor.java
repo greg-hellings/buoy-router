@@ -7,12 +7,12 @@ package buoy.router;
 
 /**
  *
- * @author Gregory
+ * @author greg
  */
-public class TestControllerNoDefaultConstructor {
+public class TestControllerProtectedConstructor {
 
-	public TestControllerNoDefaultConstructor(String dummy) {
-
+	protected TestControllerProtectedConstructor() {
+		// noop
 	}
 
 	private void privateInstanceMethod() {

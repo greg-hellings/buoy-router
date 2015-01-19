@@ -5,7 +5,9 @@
  */
 package buoy.router;
 
-import buoy.router.exceptions.InvalidHandlerException;
+import buoy.router.exceptions.HandlerExecutionException;
+import buoy.router.exceptions.HandlerInstantiationException;
+import buoy.router.exceptions.InvalidHandlerDefinitionException;
 import buoy.router.utils.Argument;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,106 +29,139 @@ public class SimpleHandler<T> implements Handler<T> {
 	private Method method;
 	private List<Argument> arguments;
 	private static final Logger log = Logger.getLogger(SimpleHandler.class.getName());
+	private boolean isStatic;
 
-	public SimpleHandler(String classname, String methodname) throws InvalidHandlerException {
+	public SimpleHandler(String classname, String methodname) throws InvalidHandlerDefinitionException {
+		// Find the class that we'll be working with
 		Class<T> clazz = null;
 		try {
 			clazz = (Class<T>) Class.forName(classname);
-			this.constructor = this.extractConstructor(clazz);
 		} catch (ClassNotFoundException exception) {
 			log.log(Level.SEVERE, "Unable to locate " + classname);
-			throw new InvalidHandlerException("No classname " + classname + " found");
+			throw new InvalidHandlerDefinitionException("No classname " + classname + " found");
 		}
-
+		// Find the method, if one exists
 		for (Method method : clazz.getMethods()) {
 			if (method.getName().equals(methodname)) {
 				this.method = method;
 			}
 		}
-
-		if (this.method == null) {
-			throw new InvalidHandlerException("No method of " + methodname + " found on class " + classname);
+		this.checkMethod();
+		if (!this.isStatic) {
+			// Extract its constructor
+			this.constructor = this.extractConstructor(clazz);
+			this.checkConstructor();
 		}
 
 		this.extractArguments();
 	}
 
-	public SimpleHandler(Class<T> clazz, Method method) {
-		this.constructor = this.extractConstructor(clazz);
+	public SimpleHandler(Class<T> clazz, Method method) throws InvalidHandlerDefinitionException {
 		this.method = method;
+		this.checkMethod();
+		if (!this.isStatic) {
+			this.constructor = this.extractConstructor(clazz);
+			this.checkConstructor();
+		}
 
 		this.extractArguments();
 	}
 
+	/**
+	 * Verifies that the selected method is able to be called.
+	 *
+	 * Checks to be sure that the user-provided method is one which is callable. In order to be callable it must 1)
+	 * Exist 2) Be public
+	 *
+	 * @throws InvalidHandlerDefinitionException
+	 */
+	private void checkMethod() throws InvalidHandlerDefinitionException {
+		if (this.method == null) {
+			throw new InvalidHandlerDefinitionException(("No such method found on class."));
+		}
+		int modifiers = this.method.getModifiers();
+		if (Modifier.isPrivate(modifiers) || Modifier.isProtected(modifiers)) {
+			throw new InvalidHandlerDefinitionException("Method " + this.method.getName() + " is private or protected. Unable to proceed.");
+		}
+		this.isStatic = Modifier.isStatic(modifiers);
+	}
+
+	/**
+	 * Verifies that the class can be used as a handler.
+	 *
+	 * Checks that the user-provided class is one which can be used. In order to be used it must either 1) have a
+	 * non-private, non-protected default constructor OR 2) be referencing a static method
+	 *
+	 * @throws InvalidHandlerDefinitionException
+	 */
+	private void checkConstructor() throws InvalidHandlerDefinitionException {
+		if (this.constructor == null && !this.isStatic) {
+			throw new InvalidHandlerDefinitionException("No dfeault constructor found, therefore method needs to be static.");
+		}
+	}
+
+	/**
+	 * Fetches the default constructor for the provided clazz.
+	 *
+	 * Really just a convenience method because there are several exceptions which need to be caught on the constructor
+	 * which we don't really want child methods to be burdened with over and over.
+	 *
+	 * @param clazz
+	 * @return
+	 */
 	private Constructor<T> extractConstructor(Class<T> clazz) {
 		try {
 			return clazz.getConstructor();
-		} catch (NoSuchMethodException ex) {
-			log.log(Level.SEVERE, "It appears there is no default constructor. Assuming method is static.");
-		} catch (SecurityException ex) {
-			log.log(Level.SEVERE, "No accessible default constructor. Assuming method is static.");
+		} catch (NoSuchMethodException | SecurityException ex) {
+			log.log(Level.SEVERE, "It appears there is no accessible default constructor. Proceeding in case method is static. Please check that constructor is not private or protected.");
 		}
 		return null;
 	}
 
+	/**
+	 * Retrieves the arguments for the method, and crafts a way for those arguments to be distilled from the invocation
+	 * object received later on.
+	 */
 	private void extractArguments() {
 		Parameter[] parameters = this.method.getParameters();
 		this.arguments = new ArrayList<>(parameters.length);
 		for (Parameter parameter : parameters) {
-			try {
-				this.arguments.add(new Argument(parameter.getName(), parameter.getType()));
-			} catch (NoSuchMethodException ex) {
-				log.log(Level.SEVERE, "Unable to identify string-based constructor for type " + parameter.getType().getName());
-				this.arguments.add(null);
-			}
+			this.arguments.add(new Argument(parameter.getName(), parameter.getType()));
 		}
 	}
 
 	@Override
-	public void handleRequest(Invocation invocation) {
+	public void handleRequest(Invocation invocation) throws HandlerInstantiationException, HandlerExecutionException {
 		// Try to instantiate the class we're invoking on
 		T subject = null;
-		if (!Modifier.isStatic(this.method.getModifiers())) {
-			if (this.constructor == null) {
-				log.log(Level.SEVERE, "It appears the class constructor was private or no default constructor exists. Attempting to recover by invoking method as a static.");
-			} else {
-				try {
-					subject = this.constructor.newInstance();
-				} catch (IllegalAccessException |
-						InstantiationException |
-						IllegalArgumentException |
-						InvocationTargetException exception) {
-					log.log(Level.SEVERE, "An error occured trying to instantiate this handler.");
-				}
+		if (!this.isStatic) {
+			try {
+				subject = this.constructor.newInstance();
+			} catch (IllegalAccessException |
+					InstantiationException |
+					IllegalArgumentException |
+					InvocationTargetException exception) {
+				log.log(Level.SEVERE, "An error occured trying to instantiate this handler.");
+				throw new HandlerInstantiationException("An error occurred while instantiating the handling class.");
 			}
 		}
 		this.handleRequest(subject, invocation);
 	}
 
 	@Override
-	public void handleRequest(T t, Invocation invocation
-	) {
+	public void handleRequest(T t, Invocation invocation) throws HandlerExecutionException {
 		// Convert values from invocation to argument list
 		Object[] arguments = new Object[this.arguments.size()];
 		int argCounter = 0;
 		for (Argument argument : this.arguments) {
-			try {
-				arguments[argCounter] = argument.getType(invocation);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException ex) {
-				log.log(Level.SEVERE, "Problem instantiating object. Replacing with null.");
-				arguments[argCounter] = null;
-			}
-			argCounter++;
+			arguments[argCounter++] = argument.getType(invocation);
 		}
 		// Try to invoke the method
 		try {
 			this.method.invoke(t, arguments);
-		} catch (IllegalAccessException ex) {
-			log.log(Level.SEVERE, "It appears the specified method is not public. Please ensure it is accessible and try again.");
-		} catch (IllegalArgumentException ex) {
-			log.log(Level.SEVERE, "Unable to call the specified method, as we were unable to construct its necessary arguments.");
-		} catch (InvocationTargetException ex) {
-			log.log(Level.SEVERE, "Method reported the following exception.");
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			log.log(Level.SEVERE, "There was an exception while executing your method.");
+			throw new HandlerExecutionException("There was an exception while executing your method.", ex);
 		}
 	}
 }

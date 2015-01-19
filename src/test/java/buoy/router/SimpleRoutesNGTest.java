@@ -5,7 +5,7 @@
  */
 package buoy.router;
 
-import buoy.router.exceptions.InvalidHandlerException;
+import buoy.router.exceptions.InvalidHandlerDefinitionException;
 import buoy.router.http.Verb;
 import buoy.router.utils.RouteReader;
 import java.lang.reflect.Method;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,13 +34,17 @@ public class SimpleRoutesNGTest {
 			Class<TestController> c = TestController.class;
 			Method m = null;
 			try {
-				m = c.getMethod("noArgumentMethod");
+				m = c.getMethod("publicInstanceMethod");
 			} catch (NoSuchMethodException | SecurityException ex) {
 				Logger.getLogger(SimpleRoutesNGTest.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/first/path"), new SimpleHandler<>(c, m)));
-			list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/second/path"), new SimpleHandler<>(c, m)));
-			list.add(new Pair<>(new SimpleRoute<>(Verb.OPTIONS, "/first/path"), new SimpleHandler<>(c, m)));
+			try {
+				list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/first/path"), new SimpleHandler<>(c, m)));
+				list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/second/path"), new SimpleHandler<>(c, m)));
+				list.add(new Pair<>(new SimpleRoute<>(Verb.OPTIONS, "/first/path"), new SimpleHandler<>(c, m)));
+			} catch (InvalidHandlerDefinitionException exception) {
+				// oops
+			}
 			list.iterator();
 		}
 
@@ -66,7 +70,7 @@ public class SimpleRoutesNGTest {
 	 * Test of addRoute method, of class SimpleRoutes.
 	 */
 	@Test
-	public void testAddRoute() throws InvalidHandlerException {
+	public void testAddRoute() throws InvalidHandlerDefinitionException {
 		SimpleHandler<TestController> simpleHandler = new SimpleHandler<>(TestController.class.getCanonicalName(), "stringArgumentMethod");
 		this.simpleRoutes.addRoute(new SimpleRoute<>(Verb.PUT, "/added/route"), simpleHandler);
 		assertTrue(simpleHandler == this.simpleRoutes.getHandlerForRoute(new SimpleRoute<>(Verb.PUT, "/added/route")));

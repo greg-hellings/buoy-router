@@ -14,7 +14,27 @@ public class TestControllerPrivateConstructor {
 	private TestControllerPrivateConstructor() {
 	}
 
-	public void instanceMethod() {
+	private void privateInstanceMethod() {
+
+	}
+
+	protected void protectedInstanceMethod() {
+
+	}
+
+	public void publicInstanceMethod() {
+
+	}
+
+	private static void privateStaticMethod() {
+
+	}
+
+	protected static void protectedStaticMethod() {
+
+	}
+
+	public static void publicStaticMethod() {
 
 	}
 }

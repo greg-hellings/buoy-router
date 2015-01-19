@@ -15,20 +15,18 @@ public class TestInvocation implements Invocation {
 
 	@Override
 	public boolean hasKey(String key) {
-		if (key.equals("testInt") || key.equals("testInteger") || key.equals("testString")) {
-			return true;
-		}
-		return false;
+		return key.equals("testInt") || key.equals("testInteger") || key.equals("testString");
 	}
 
 	@Override
 	public String getValue(String key) {
-		if (key.equals("testInt")) {
-			return "1";
-		} else if (key.equals("testInteger")) {
-			return "2";
-		} else if (key.equals("testString")) {
-			return "Test String";
+		switch (key) {
+			case "testInt":
+				return "1";
+			case "testInteger":
+				return "2";
+			case "testString":
+				return "Test String";
 		}
 
 		fail("Should not have been here.");

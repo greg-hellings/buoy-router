@@ -5,13 +5,16 @@
  */
 package buoy.router;
 
+import buoy.router.exceptions.HandlerExecutionException;
+import buoy.router.exceptions.HandlerInstantiationException;
+
 /**
  *
  * @author greg
  */
 public interface Handler<T> {
 
-	void handleRequest(T t, Invocation invocation);
+	void handleRequest(T t, Invocation invocation) throws HandlerExecutionException;
 
-	void handleRequest(Invocation invocation);
+	void handleRequest(Invocation invocation) throws HandlerInstantiationException, HandlerExecutionException;
 }
