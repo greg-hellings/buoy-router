@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/greg-hellings/buoy-router.svg?branch=master)](https://travis-ci.org/greg-hellings/buoy-router)
+[![Coverage Status](https://coveralls.io/repos/greg-hellings/buoy-router/badge.svg?branch=master)](https://coveralls.io/r/greg-hellings/buoy-router?branch=master)
 
 # buoy-router   1.0-SNAPSHOT
 ## Introduction
