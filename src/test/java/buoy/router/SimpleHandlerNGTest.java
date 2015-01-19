@@ -157,6 +157,15 @@ public class SimpleHandlerNGTest {
 		verify(incrementer, times(1)).increment();
 	}
 
+	/*
+	 * Test both methods of calling static
+	 */
+	@Test
+	public void testStaticMethodByMethod() throws InvalidHandlerDefinitionException, NoSuchMethodException {
+		Method method = TestController.class.getMethod("publicStaticMethod");
+		SimpleHandler<TestController> simpleHandler = new SimpleHandler<>(TestController.class, method);
+	}
+
 	@Test(expectedExceptions = {InvalidHandlerDefinitionException.class})
 	public void testNoDefaultConstructorAndInvalidMethod() throws InvalidHandlerDefinitionException, HandlerInstantiationException, HandlerExecutionException {
 		SimpleHandler<TestControllerNoDefaultConstructor> simpleHandler = new SimpleHandler<>(TestControllerNoDefaultConstructor.class.getCanonicalName(), "notAMethod");

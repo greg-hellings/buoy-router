@@ -80,8 +80,8 @@ public class SimpleHandler<T> implements Handler<T> {
 			throw new InvalidHandlerDefinitionException(("No such method found on class."));
 		}
 		int modifiers = this.method.getModifiers();
-		if (Modifier.isPrivate(modifiers) || Modifier.isProtected(modifiers)) {
-			throw new InvalidHandlerDefinitionException("Method " + this.method.getName() + " is private or protected. Unable to proceed.");
+		if (!Modifier.isPublic(modifiers)) {
+			throw new InvalidHandlerDefinitionException("Method " + this.method.getName() + " is not public. Unable to proceed.");
 		}
 		this.isStatic = Modifier.isStatic(modifiers);
 	}
@@ -95,7 +95,7 @@ public class SimpleHandler<T> implements Handler<T> {
 	 * @throws InvalidHandlerDefinitionException
 	 */
 	private void checkConstructor() throws InvalidHandlerDefinitionException {
-		if (this.constructor == null && !this.isStatic) {
+		if (this.constructor == null) {
 			throw new InvalidHandlerDefinitionException("No dfeault constructor found, therefore method needs to be static.");
 		}
 	}
