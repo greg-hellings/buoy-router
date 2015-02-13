@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router;
+package buoy.tests.router;
 
 /**
  *
- * @author Gregory
+ * @author greg
  */
-public class TestControllerNoDefaultConstructor {
+public class TestControllerProtectedConstructor {
 
-	public TestControllerNoDefaultConstructor(String dummy) {
-
+	protected TestControllerProtectedConstructor() {
+		// noop
 	}
 
 	private void privateInstanceMethod() {

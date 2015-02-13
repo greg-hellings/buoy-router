@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router;
+package buoy.tests.router;
 
+import buoy.router.*;
 import buoy.router.exceptions.InvalidHandlerDefinitionException;
 import buoy.router.http.Verb;
 import buoy.router.utils.RouteReader;

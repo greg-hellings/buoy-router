@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router.utils;
+package buoy.tests.utils;
 
-import buoy.router.TestInvocation;
+import buoy.router.utils.Argument;
+import buoy.tests.router.TestInvocation;
 import java.lang.reflect.InvocationTargetException;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
