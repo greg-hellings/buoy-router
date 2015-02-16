@@ -3,19 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buoy.router;
+package buoy.router.http;
+
+import buoy.router.Route;
 
 /**
  * A simple route which requires nothing other than a verb and a path to define itself.
  *
  * @author greg
  */
-public class SimpleRoute<T extends Enum> implements Route<T> {
+public class HTTPRoute<T extends Enum> implements Route<T> {
 
 	private T verb;
 	private String path;
 
-	public SimpleRoute(T verb, String path) {
+	public HTTPRoute(T verb, String path) {
 		this.verb = verb;
 		this.path = path;
 	}

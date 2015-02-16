@@ -7,6 +7,7 @@ package buoy.tests.router;
 
 import buoy.router.*;
 import buoy.router.exceptions.InvalidHandlerDefinitionException;
+import buoy.router.http.HTTPRoute;
 import buoy.router.http.Verb;
 import buoy.router.utils.RouteReader;
 import java.lang.reflect.Method;
@@ -24,7 +25,7 @@ import org.testng.annotations.Test;
  *
  * @author Gregory
  */
-public class SimpleRoutesNGTest {
+public class HTTPRoutesNGTest {
 
 	public static class TestRouteReader implements RouteReader {
 
@@ -37,12 +38,12 @@ public class SimpleRoutesNGTest {
 			try {
 				m = c.getMethod("publicInstanceMethod");
 			} catch (NoSuchMethodException | SecurityException ex) {
-				Logger.getLogger(SimpleRoutesNGTest.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(HTTPRoutesNGTest.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			try {
-				list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/first/path"), new SimpleHandler<>(c, m)));
-				list.add(new Pair<>(new SimpleRoute<>(Verb.GET, "/second/path"), new SimpleHandler<>(c, m)));
-				list.add(new Pair<>(new SimpleRoute<>(Verb.OPTIONS, "/first/path"), new SimpleHandler<>(c, m)));
+				list.add(new Pair<>(new HTTPRoute<>(Verb.GET, "/first/path"), new SimpleHandler<>(c, m)));
+				list.add(new Pair<>(new HTTPRoute<>(Verb.GET, "/second/path"), new SimpleHandler<>(c, m)));
+				list.add(new Pair<>(new HTTPRoute<>(Verb.OPTIONS, "/first/path"), new SimpleHandler<>(c, m)));
 			} catch (InvalidHandlerDefinitionException exception) {
 				// oops
 			}
@@ -59,12 +60,12 @@ public class SimpleRoutesNGTest {
 	private static TestRouteReader testRouteReader = new TestRouteReader();
 	private SimpleRoutes simpleRoutes;
 
-	public SimpleRoutesNGTest() {
+	public HTTPRoutesNGTest() {
 	}
 
 	@BeforeMethod
 	public void setUpMethod() throws Exception {
-		this.simpleRoutes = new SimpleRoutes(SimpleRoutesNGTest.testRouteReader);
+		this.simpleRoutes = new SimpleRoutes(HTTPRoutesNGTest.testRouteReader);
 	}
 
 	/**
@@ -73,8 +74,8 @@ public class SimpleRoutesNGTest {
 	@Test
 	public void testAddRoute() throws InvalidHandlerDefinitionException {
 		SimpleHandler<TestController> simpleHandler = new SimpleHandler<>(TestController.class.getCanonicalName(), "stringArgumentMethod");
-		this.simpleRoutes.addRoute(new SimpleRoute<>(Verb.PUT, "/added/route"), simpleHandler);
-		assertTrue(simpleHandler == this.simpleRoutes.getHandlerForRoute(new SimpleRoute<>(Verb.PUT, "/added/route")));
+		this.simpleRoutes.addRoute(new HTTPRoute<>(Verb.PUT, "/added/route"), simpleHandler);
+		assertTrue(simpleHandler == this.simpleRoutes.getHandlerForRoute(new HTTPRoute<>(Verb.PUT, "/added/route")));
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class SimpleRoutesNGTest {
 	@Test
 	public void testGetHandlerForRoute() {
 		assertTrue(
-				this.simpleRoutes.getHandlerForRoute(new SimpleRoute<>(Verb.GET, "/first/path"))
+				this.simpleRoutes.getHandlerForRoute(new HTTPRoute<>(Verb.GET, "/first/path"))
 				== TestRouteReader.list.get(0).getValue()
 		);
 	}
@@ -94,7 +95,7 @@ public class SimpleRoutesNGTest {
 	@Test
 	public void testClearRoutes() {
 		this.simpleRoutes.clearRoutes();
-		assertTrue(this.simpleRoutes.getHandlerForRoute(new SimpleRoute<>(Verb.GET, "/first/path")) == null);
+		assertTrue(this.simpleRoutes.getHandlerForRoute(new HTTPRoute<>(Verb.GET, "/first/path")) == null);
 	}
 
 	@Test
