@@ -1,8 +1,5 @@
 package buoy.router.http;
 
-import buoy.router.PrefixRoute;
-import buoy.router.Route;
-
 /**
  * Created by Gregory on 4/20/2015.
  */
@@ -14,12 +11,12 @@ public class PrefixRoute extends buoy.router.PrefixRoute<Verb> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Route)) {
+        if (!(o instanceof buoy.router.Route)) {
             return false;
         }
-        Route<Verb> other = null;
+        buoy.router.Route<Verb> other = null;
         try {
-            other = (Route<Verb>) o;
+            other = (buoy.router.Route<Verb>) o;
         } catch(ClassCastException ex) {
             return false;
         }

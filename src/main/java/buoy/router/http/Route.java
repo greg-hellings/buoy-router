@@ -5,8 +5,6 @@
  */
 package buoy.router.http;
 
-import buoy.router.Route;
-
 /**
  * A simple route which requires nothing other than a verb and a path to define itself.
  *
