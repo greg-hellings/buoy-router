@@ -12,12 +12,12 @@ import buoy.router.Route;
  *
  * @author greg
  */
-public class HTTPRoute<T extends Enum> implements Route<T> {
+public class Route<T extends Enum> implements buoy.router.Route<T> {
 
 	private T verb;
 	private String path;
 
-	public HTTPRoute(T verb, String path) {
+	public Route(T verb, String path) {
 		this.verb = verb;
 		this.path = path;
 	}
@@ -34,10 +34,10 @@ public class HTTPRoute<T extends Enum> implements Route<T> {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof Route)) {
+		if (!(other instanceof buoy.router.Route)) {
 			return false;
 		}
-		Route route = (Route) other;
+		buoy.router.Route route = (buoy.router.Route) other;
 		return this.getVerb() == route.getVerb()
 				&& (this.getPath() == null ? route.getPath() == null : this.getPath().equals(route.getPath()));
 	}

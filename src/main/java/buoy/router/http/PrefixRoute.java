@@ -6,9 +6,9 @@ import buoy.router.Route;
 /**
  * Created by Gregory on 4/20/2015.
  */
-public class HTTPPrefixRoute extends PrefixRoute<Verb> {
+public class PrefixRoute extends buoy.router.PrefixRoute<Verb> {
 
-    public HTTPPrefixRoute(Verb verb, String path) {
+    public PrefixRoute(Verb verb, String path) {
         super(verb, path);
     }
 

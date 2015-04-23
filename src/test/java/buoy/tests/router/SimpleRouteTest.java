@@ -1,5 +1,6 @@
-package buoy.router;
+package buoy.tests.router;
 
+import buoy.router.SimpleRoute;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

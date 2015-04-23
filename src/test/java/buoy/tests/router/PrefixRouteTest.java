@@ -1,5 +1,7 @@
-package buoy.router;
+package buoy.tests.router;
 
+import buoy.router.PrefixRoute;
+import buoy.router.SimpleRoute;
 import buoy.router.http.Verb;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
